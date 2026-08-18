@@ -1,0 +1,8 @@
+rdkit
+biopython
+scikit-learn
+pandas
+numpy
+chembl_webresource_client
+deepchem
+streamlit

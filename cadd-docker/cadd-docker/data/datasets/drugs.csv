@@ -1,0 +1,16 @@
+name,smiles
+Aspirin,CC(=O)OC1=CC=CC=C1C(=O)O
+Ibuprofen,CC(C)Cc1ccc(cc1)C(C)C(=O)O
+Caffeine,CN1C=NC2=C1C(=O)N(C(=O)N2C)C
+Paracetamol,CC(=O)Nc1ccc(O)cc1
+Naproxen,COc1ccc2cc(ccc2c1)C(C)C(=O)O
+Ciprofloxacin,OC(=O)c1cn(C2CC2)c2cc(N3CCNCC3)c(F)cc2c1=O
+Metformin,CN(C)C(=N)NC(=N)N
+Atorvastatin,CC(C)c1c(C(=O)Nc2ccccc2)c(-c2ccccc2)c(-c2ccc(F)cc2)n1CCC(O)CC(O)CC(=O)O
+Diazepam,CN1c2ccc(Cl)cc2C(=NCC1=O)c1ccccc1
+Penicillin_G,CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O
+Omeprazole,CC1=CN=C(CS(=O)c2nc3ccc(OC)cc3[nH]2)C(C)=C1OC
+Warfarin,CC(=O)CC(c1ccccc1)c1c(O)c2ccccc2oc1=O
+Insulin_fragment_Glycine,NCC(=O)O
+Morphine,CN1CCC23c4c5ccc(O)c4OC2C(O)C=CC3C1C5
+Cetirizine,OC(=O)COCCN1CCN(CC1)C(c1ccccc1)c1ccc(Cl)cc1
