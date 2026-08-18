@@ -92,8 +92,12 @@ st.write(
     "3D structure."
 )
 
+import os
+
 # Load the starter drug list
-drugs_df = pd.read_csv("../data/datasets/drugs.csv")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(current_dir, "..", "data", "datasets", "drugs.csv")
+drugs_df = pd.read_csv(csv_path)
 
 mode = st.radio("Choose input method:", ["Pick from list", "Enter my own SMILES"])
 

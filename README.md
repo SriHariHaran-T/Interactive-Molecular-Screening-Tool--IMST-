@@ -1,4 +1,4 @@
-# OInteractive-Molecular-Screening-Tool-(IMST)
+# Interactive Molecular Screening Tool (IMST)
 
 This is a local interactive web application that allows you to pick a drug (or enter your own SMILES string) and see:
 1. Whether it's likely to be an effective ORAL drug (absorbed by the human gut) based on standard Lipinski and Veber rules.
@@ -41,3 +41,7 @@ This will automatically open a browser tab (typically at `http://localhost:8501`
 - `scripts/app.py`: The main Streamlit web application.
 - `data/datasets/drugs.csv`: A sample dataset of drugs to choose from.
 - `requirements.txt`: Python package dependencies.
+
+## Access Project Using URL 
+
+https://imstproject.streamlit.app/
