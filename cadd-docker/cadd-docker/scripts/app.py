@@ -84,8 +84,8 @@ def render_3d_viewer(molblock, height=400):
 
 
 # ---------- The App ----------
-st.set_page_config(page_title="Oral Drug Checker", layout="centered")
-st.title("Oral Drug Absorption Checker")
+st.set_page_config(page_title="Interactive Molecular Screening Tool (IMST)", layout="centered")
+st.title("Interactive Molecular Screening Tool (IMST)")
 st.write(
     "Pick a drug, or enter your own molecule, to check whether it's "
     "likely to be effectively absorbed as an oral drug and see its "
