@@ -2,7 +2,7 @@
 
 Welcome to the **Interactive Molecular Screening Tool (IMST)**! 
 
-IMST is a cutting-edge computational drug-screening web application designed to streamline the early stages of Computer-Aided Drug Design (CADD). By focusing on ADMET-based oral drug screening, IMST instantly predicts whether a molecule is likely to be effectively absorbed by the human gut and whether it fits a general oral drug profile.
+IMST is a computational drug-screening web application designed to streamline the early stages of Computer-Aided Drug Design (CADD). By focusing on ADMET-based oral drug screening, IMST instantly predicts whether a molecule is likely to be effectively absorbed by the human gut and whether it fits a general oral drug profile.
 
 ---
 
