@@ -18,11 +18,18 @@ Usage:
 """
 
 import sys
+import os
+import subprocess
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
 
-def prepare_ligand(smiles, name, output_dir="data/ligands"):
+def prepare_ligand(smiles, name, output_dir=None):
+    if output_dir is None:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.abspath(os.path.join(current_dir, "..", "data", "ligands"))
+    
+    os.makedirs(output_dir, exist_ok=True)
     # Step 1: parse SMILES into a molecule object
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
@@ -45,11 +52,25 @@ def prepare_ligand(smiles, name, output_dir="data/ligands"):
     writer.close()
 
     print(f"3D ligand structure saved to: {output_path}")
-    print("Next step (run in terminal, needs Open Babel):")
-    print(f"  obabel {output_path} -O {output_path.replace('.sdf', '.pdbqt')}")
-    print("  (converts to the .pdbqt format Vina requires)")
+    
+    # Step 6: Convert SDF to PDBQT using native Open Babel
+    pdbqt_path = output_path.replace('.sdf', '.pdbqt')
+    print(f"Converting to {pdbqt_path} using Open Babel...")
+    
+    try:
+        # obabel needs to be in PATH or provided via absolute path if missing.
+        # We assume it is in PATH per the user's setup.
+        result = subprocess.run(
+            ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path],
+            capture_output=True, text=True, check=True, shell=True
+        )
+        print("Conversion successful.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error converting with Open Babel: {e}")
+        print(f"obabel output: {e.stdout}\n{e.stderr}")
+        raise
 
-    return output_path
+    return pdbqt_path
 
 
 if __name__ == "__main__":
