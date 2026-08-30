@@ -37,6 +37,28 @@ def run_docking(receptor, ligand, center, box_size,
         output_dir = os.path.abspath(os.path.join(current_dir, "..", "results", "docking"))
     os.makedirs(output_dir, exist_ok=True)
 
+    # 1. Verify Vina in PATH
+    vina_path = shutil.which("vina")
+    print(f"shutil.which('vina'): {vina_path}")
+    if vina_path is None:
+        path_env = os.environ.get("PATH", "")
+        raise RuntimeError(
+            f"AutoDock Vina executable ('vina') not found on PATH.\n"
+            f"shutil.which('vina') returned None.\n"
+            f"PATH environment variable: {path_env}"
+        )
+
+    # 2. Verify receptor and ligand PDBQT files
+    if not os.path.exists(receptor):
+        raise FileNotFoundError(f"Receptor PDBQT file not found: {receptor}")
+    if os.path.getsize(receptor) == 0:
+        raise ValueError(f"Receptor PDBQT file is empty (0 bytes): {receptor}")
+
+    if not os.path.exists(ligand):
+        raise FileNotFoundError(f"Ligand PDBQT file not found: {ligand}")
+    if os.path.getsize(ligand) == 0:
+        raise ValueError(f"Ligand PDBQT file is empty (0 bytes): {ligand}")
+
     ligand_name = os.path.splitext(os.path.basename(ligand))[0]
     out_path = os.path.join(output_dir, f"{ligand_name}_docked.pdbqt")
     log_path = os.path.join(output_dir, f"{ligand_name}_log.txt")
@@ -57,44 +79,56 @@ def run_docking(receptor, ligand, center, box_size,
 
     print("Running:", " ".join(cmd))
     
-    try:
-        # Check=True will raise CalledProcessError on non-zero exit
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True, shell=True)
-        
-        with open(log_path, "w") as log_file:
-            log_file.write(result.stdout)
-            if result.stderr:
-                log_file.write("\nSTDERR:\n" + result.stderr)
-        
-        # Parse score from stdout
-        # Vina output table looks like:
-        # mode |   affinity | dist from best mode
-        #      | (kcal/mol) | rmsd l.b.| rmsd u.b.
-        # -----+------------+----------+----------
-        #    1         -7.4      0.000      0.000
-        best_score = None
-        for line in result.stdout.split('\n'):
-            line = line.strip()
-            if line.startswith('1') and len(line.split()) >= 2:
-                try:
-                    best_score = float(line.split()[1])
-                    break
-                except ValueError:
-                    pass
-                    
-        print(f"Docking complete. Poses saved to: {out_path}")
-        print(f"Best score: {best_score}")
-        return out_path, best_score
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True
+    )
+    
+    print(f"Vina exit code: {result.returncode}")
+    print(f"Vina STDOUT:\n{result.stdout}")
+    print(f"Vina STDERR:\n{result.stderr}")
+    
+    with open(log_path, "w") as log_file:
+        log_file.write(result.stdout or "")
+        if result.stderr:
+            log_file.write("\nSTDERR:\n" + result.stderr)
+            
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"AutoDock Vina failed with return code {result.returncode}\n"
+            f"Command: {' '.join(cmd)}\n\n"
+            f"STDOUT:\n{result.stdout if result.stdout else '(empty)'}\n\n"
+            f"STDERR:\n{result.stderr if result.stderr else '(empty)'}"
+        )
 
-    except subprocess.CalledProcessError as e:
-        print(f"Vina failed with exit code {e.returncode}")
-        print(f"STDOUT:\n{e.stdout}")
-        print(f"STDERR:\n{e.stderr}")
-        return None, None
-    except Exception as e:
-        print(f"An unexpected error occurred during docking: {e}")
-        traceback.print_exc()
-        return None, None
+    # Parse score from stdout
+    # Vina output table looks like:
+    # mode |   affinity | dist from best mode
+    #      | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    # -----+------------+----------+----------
+    #    1         -7.4      0.000      0.000
+    best_score = None
+    for line in result.stdout.split('\n'):
+        line = line.strip()
+        if line.startswith('1') and len(line.split()) >= 2:
+            try:
+                best_score = float(line.split()[1])
+                break
+            except ValueError:
+                pass
+                
+    if best_score is None:
+        raise RuntimeError(
+            f"AutoDock Vina ran (exit code {result.returncode}) but no affinity score could be parsed from output.\n"
+            f"Command: {' '.join(cmd)}\n\n"
+            f"STDOUT:\n{result.stdout if result.stdout else '(empty)'}\n\n"
+            f"STDERR:\n{result.stderr if result.stderr else '(empty)'}"
+        )
+                
+    print(f"Docking complete. Poses saved to: {out_path}")
+    print(f"Best score: {best_score}")
+    return out_path, best_score
 
 
 if __name__ == "__main__":

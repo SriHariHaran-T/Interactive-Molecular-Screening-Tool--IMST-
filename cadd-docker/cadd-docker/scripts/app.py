@@ -247,10 +247,13 @@ def run_single_drug(name, smiles):
     except Exception as e:
         return name, smiles, None, None, f"Ligand preparation failed: {e}"
 
-    docked_path, score = run_docking(
-        receptor=RECEPTOR_PDBQT, ligand=ligand_pdbqt,
-        center=HIV_CENTER, box_size=HIV_BOX, exhaustiveness=8
-    )
+    try:
+        docked_path, score = run_docking(
+            receptor=RECEPTOR_PDBQT, ligand=ligand_pdbqt,
+            center=HIV_CENTER, box_size=HIV_BOX, exhaustiveness=8
+        )
+    except Exception as e:
+        return name, smiles, None, None, f"AutoDock Vina failed: {e}"
     if docked_path is None:
         return name, smiles, None, None, "AutoDock Vina produced no result"
     return name, smiles, score, docked_path, None
@@ -647,10 +650,14 @@ with tab3:
 
         # Step 2: Docking
         with st.spinner("Step 2 of 3 - Running AutoDock Vina (exhaustiveness=8, up to ~60 s)..."):
-            docked_path, best_score = run_docking(
-                receptor=RECEPTOR_PDBQT, ligand=ligand_pdbqt,
-                center=HIV_CENTER, box_size=HIV_BOX, exhaustiveness=8,
-            )
+            try:
+                docked_path, best_score = run_docking(
+                    receptor=RECEPTOR_PDBQT, ligand=ligand_pdbqt,
+                    center=HIV_CENTER, box_size=HIV_BOX, exhaustiveness=8,
+                )
+            except Exception as e:
+                st.error(f"AutoDock Vina failed:\n```\n{e}\n```")
+                st.stop()
 
         if docked_path is None or best_score is None:
             st.error(
