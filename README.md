@@ -142,13 +142,17 @@ The application requires Python and the following Python packages:
 * `pandas`
 * `rdkit`
 * `biopython`
+* `scikit-learn`
+* `numpy`
+* `chembl_webresource_client`
+* `deepchem`
 
 The application also requires the following external command-line tools:
 
 * Open Babel
 * AutoDock Vina
 
-Both executables must be available through the system `PATH`.
+Both executables must be available through the system `PATH`. For Streamlit Cloud deployment, these are specified in `packages.txt`.
 
 Verify the installations using:
 

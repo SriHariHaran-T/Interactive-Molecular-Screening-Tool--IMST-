@@ -42,6 +42,7 @@ IMST is designed to be a versatile tool for various users in the scientific comm
   - *Veber’s Rule*: Predicts human gut absorption based on TPSA and rotatable bonds.
 - **Live Verdict Badges**: Instantly see easy-to-read badges indicating "Likely absorbed by the gut" or "Fits general oral drug profile".
 - **Interactive 3D Viewer**: A rotatable, zoomable 3D molecular structure viewer powered by 3Dmol.js.
+- **Molecular Docking Pipeline**: Perform molecular docking against protein targets (e.g., HIV-1 Protease) using AutoDock Vina, complete with protein-ligand contact analysis and 3D pose visualization.
 
 ---
 
@@ -63,6 +64,13 @@ Ideal for testing new ideas and novel compounds.
 3. Paste or type the SMILES string of your molecule into the input field.
 4. Hit enter, and IMST will instantly compute the descriptors, render the 3D structure, and deliver the ADMET verdicts.
 
+### Method 3: Molecular Docking
+Screen your molecule against a protein target.
+1. Navigate to the **Docking** section in the web app.
+2. Ensure your SMILES string is loaded.
+3. Initiate the docking process (powered by AutoDock Vina).
+4. Analyze the resulting docking score, binding pose, and protein-ligand interactions in the 3D viewer.
+
 ---
 
-*IMST is actively being developed by the First-Year Integrated M.Sc. Data Science program at TCE Madurai. Future updates will include molecular docking capabilities!*
+*IMST is actively being developed by the First-Year Integrated M.Sc. Data Science program at TCE Madurai. It now includes full molecular docking capabilities!*
