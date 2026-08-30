@@ -57,18 +57,24 @@ def prepare_ligand(smiles, name, output_dir=None):
     pdbqt_path = output_path.replace('.sdf', '.pdbqt')
     print(f"Converting to {pdbqt_path} using Open Babel...")
     
-    try:
-        # obabel needs to be in PATH or provided via absolute path if missing.
-        # We assume it is in PATH per the user's setup.
-        result = subprocess.run(
-            ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path],
-            capture_output=True, text=True, check=True, shell=True
-        )
-        print("Conversion successful.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error converting with Open Babel: {e}")
-        print(f"obabel output: {e.stdout}\n{e.stderr}")
-        raise
+    if not os.path.exists(output_path):
+        raise FileNotFoundError(f"Input SDF file not found: {output_path}")
+    if os.path.getsize(output_path) == 0:
+        raise ValueError(f"Input SDF file is empty: {output_path}")
+        
+    # obabel needs to be in PATH or provided via absolute path if missing.
+    # We assume it is in PATH per the user's setup.
+    result = subprocess.run(
+        ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path],
+        capture_output=True, text=True, shell=True
+    )
+    
+    if result.returncode != 0:
+        error_msg = f"Open Babel conversion failed with exit code {result.returncode}.\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        print(error_msg)
+        raise RuntimeError(error_msg)
+        
+    print("Conversion successful.")
 
     return pdbqt_path
 
