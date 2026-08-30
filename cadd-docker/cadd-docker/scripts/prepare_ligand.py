@@ -60,22 +60,27 @@ def prepare_ligand(smiles, name, output_dir=None):
     if not os.path.exists(output_path):
         raise FileNotFoundError(f"Input SDF file not found: {output_path}")
     if os.path.getsize(output_path) == 0:
-        raise ValueError(f"Input SDF file is empty: {output_path}")
+        raise ValueError(f"Input SDF file is empty (0 bytes): {output_path}")
         
-    # obabel needs to be in PATH or provided via absolute path if missing.
-    # We assume it is in PATH per the user's setup.
     cmd = ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path]
+    print(f"Executing Open Babel command: {' '.join(cmd)}")
+    
     result = subprocess.run(
         cmd,
         capture_output=True,
         text=True
     )
     
+    print(f"Open Babel exit code: {result.returncode}")
+    print(f"Open Babel STDOUT:\n{result.stdout}")
+    print(f"Open Babel STDERR:\n{result.stderr}")
+    
     if result.returncode != 0:
         raise RuntimeError(
             f"Open Babel failed with return code {result.returncode}\n"
-            f"STDOUT:\n{result.stdout}\n"
-            f"STDERR:\n{result.stderr}"
+            f"Command: {' '.join(cmd)}\n\n"
+            f"STDOUT:\n{result.stdout if result.stdout else '(empty)'}\n\n"
+            f"STDERR:\n{result.stderr if result.stderr else '(empty)'}"
         )
         
     print("Conversion successful.")
