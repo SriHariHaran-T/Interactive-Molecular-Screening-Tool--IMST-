@@ -64,15 +64,19 @@ def prepare_ligand(smiles, name, output_dir=None):
         
     # obabel needs to be in PATH or provided via absolute path if missing.
     # We assume it is in PATH per the user's setup.
+    cmd = ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path]
     result = subprocess.run(
-        ["obabel", "-i", "sdf", output_path, "-o", "pdbqt", "-O", pdbqt_path],
-        capture_output=True, text=True, shell=True
+        cmd,
+        capture_output=True,
+        text=True
     )
     
     if result.returncode != 0:
-        error_msg = f"Open Babel conversion failed with exit code {result.returncode}.\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
-        print(error_msg)
-        raise RuntimeError(error_msg)
+        raise RuntimeError(
+            f"Open Babel failed with return code {result.returncode}\n"
+            f"STDOUT:\n{result.stdout}\n"
+            f"STDERR:\n{result.stderr}"
+        )
         
     print("Conversion successful.")
 
